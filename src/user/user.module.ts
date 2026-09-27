@@ -7,9 +7,9 @@ import { JwtStrategy } from './jwt.strategy';
 @Module({
   imports: [
     JwtModule.register({
-      secret: 'SUPER_TAJNY_KLUCZ_F1', 
-      signOptions: { expiresIn: '1h' },
-    }),
+  secret: process.env.JWT_SECRET || 'tajny_klucz',
+  signOptions: { expiresIn: '1h' },
+}),
   ],
   controllers: [UserController],
   providers: [UserService, JwtStrategy],

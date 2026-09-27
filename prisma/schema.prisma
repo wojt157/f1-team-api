@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String   
+  team      Team?    
+  createdAt DateTime @default(now())
+}
+
+model Team {
+  id           Int           @id @default(autoincrement())
+  name         String        @unique 
+  budget       Float         
+  foundedYear  Int?          
+  userId       Int           @unique
+  user         User          @relation(fields: [userId], references: [id])
+  cars         Car[]         
+  staffMembers StaffMember[] 
+}
+
+model Car {
+  id           Int           @id @default(autoincrement())
+  chassisName  String        
+  driverName   String        
+  number       Int           
+  teamId       Int
+  team         Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  staffMembers StaffMember[] 
+}
+
+enum StaffRole {
+  MECHANIC
+  ENGINEER
+  STRATEGIST
+  DIRECTOR
+}
+
+model StaffMember {
+  id        Int       @id @default(autoincrement())
+  firstName String
+  lastName  String
+  role      StaffRole 
+  salary    Int       
+  hiredAt   DateTime  @default(now()) 
+  isActive  Boolean   @default(true)
+  teamId    Int
+  team      Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  carId     Int?      
+  car       Car?      @relation(fields: [carId], references: [id])
+}
